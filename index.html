@@ -748,6 +748,14 @@ let currentView = 'dashboard';
 
 function uid(){ return 'x_' + Math.random().toString(36).slice(2, 10); }
 function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str || ''; return div.innerHTML; }
+
+function openWhatsApp(telefone){
+  if(!telefone) return;
+  let digits = telefone.replace(/\D/g, '');
+  // Se não tiver código do país (assume Brasil, 55), adiciona
+  if(!digits.startsWith('55')) digits = '55' + digits;
+  window.open(`https://wa.me/${digits}`, '_blank');
+}
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -953,6 +961,7 @@ function renderLeads(){
       <div class="field"><span class="k">Follow-up: </span><span class="val">${l.proximoFollowUp ? new Date(l.proximoFollowUp+'T00:00:00').toLocaleDateString('pt-BR') : 'Sem agenda'}</span></div>
       <div class="row-actions">
         ${l.etapa !== 'Fechado' ? `<button class="icon-btn" title="Converter em cliente" onclick="convertLeadToClient('${l.id}')">✓</button>` : ''}
+        ${l.telefone ? `<button class="icon-btn" title="Abrir WhatsApp" onclick="openWhatsApp('${escapeHtml(l.telefone)}')">💬</button>` : ''}
         <button class="icon-btn" title="Editar" onclick="editLead('${l.id}')">✎</button>
       </div>
     </div>
