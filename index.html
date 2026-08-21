@@ -696,7 +696,7 @@ async function doLogin(){
   try{
     const ok = await checkCredenciais(user, pass);
     if(ok){
-      await window.storage.set('v7_session', JSON.stringify({ user, ts: Date.now() }), false);
+      localStorage.setItem('v7_session', JSON.stringify({ user, ts: Date.now() }));
       showLoggedIn();
     } else {
       errEl.textContent = 'Usuário ou senha incorretos.';
@@ -716,17 +716,15 @@ function showLoggedIn(){
 }
 
 function doLogout(){
-  window.storage.delete('v7_session', false).catch(()=>{});
+  localStorage.removeItem('v7_session');
   document.getElementById('appRoot').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('loginPass').value = '';
 }
 
-async function checkSession(){
-  try{
-    const result = await window.storage.get('v7_session', false);
-    if(result && result.value){ showLoggedIn(); return; }
-  }catch(e){ /* sem sessão ativa */ }
+function checkSession(){
+  const raw = localStorage.getItem('v7_session');
+  if(raw){ showLoggedIn(); }
 }
 
 document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
